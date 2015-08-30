@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -14,11 +15,14 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView firstMessage; // hack, test
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        firstMessage = (TextView) findViewById(R.id.first_message);
 
         ServerRestClient.get("listen/1/1/1", null, new JsonHttpResponseHandler() {
             @Override
@@ -33,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject firstEvent = (JSONObject) response.get(0);
                     String messageText = firstEvent.getString("body");
-
+                    
                     // Do something with the response
                     System.out.println(messageText);
+                    firstMessage.setText(messageText);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
