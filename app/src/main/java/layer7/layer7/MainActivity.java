@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject firstEvent = (JSONObject) response.get(0);
                     String messageText = firstEvent.getString("body");
-                    
+
                     // Do something with the response
                     System.out.println(messageText);
                     firstMessage.setText(messageText);
