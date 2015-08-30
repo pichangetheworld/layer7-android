@@ -1,11 +1,15 @@
 package layer7.layer7;
 
+import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.collect.Lists;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -13,16 +17,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    TextView firstMessage; // hack, test
+    List<String> messageList = Lists.newArrayList();
+
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firstMessage = (TextView) findViewById(R.id.first_message);
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1,
+                messageList);
+
+        ListView listView = (ListView) findViewById(R.id.message_list);
+        listView.setAdapter(adapter);
 
         ServerRestClient.get("listen/1/1/1", null, new JsonHttpResponseHandler() {
             @Override
@@ -32,18 +45,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONArray responses) {
                 // Pull out the first event on the public timeline
-                try {
-                    JSONObject firstEvent = (JSONObject) response.get(0);
-                    String messageText = firstEvent.getString("body");
-
-                    // Do something with the response
-                    System.out.println(messageText);
-                    firstMessage.setText(messageText);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                for (int i = 0; i < responses.length(); i++) {
+                    try {
+                        JSONObject message = (JSONObject) responses.get(i);
+                        messageList.add(message.getString("body"));
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
+                adapter.notifyDataSetChanged();
+
             }
         });
     }
