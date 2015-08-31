@@ -1,14 +1,16 @@
 package layer7.layer7;
 
-import android.app.ListActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.common.collect.Lists;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -19,7 +21,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements OnMapReadyCallback {
 
     List<String> messageList = Lists.newArrayList();
 
@@ -30,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up the map
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        // Set up the posts list
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 messageList);
@@ -82,5 +91,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // Callback triggers when the map is ready to use
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Log.d("Layer7", "Map finished loading.");
     }
 }
