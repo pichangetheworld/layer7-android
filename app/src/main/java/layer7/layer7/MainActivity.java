@@ -63,29 +63,6 @@ public class MainActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.message_list);
         listView.setAdapter(adapter);
 
-        ServerRestClient.get("listen/1/1/1", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                // If the response is JSONObject instead of expected JSONArray
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray responses) {
-                // Pull out the first event on the public timeline
-                for (int i = 0; i < responses.length(); i++) {
-                    try {
-                        JSONObject message = (JSONObject) responses.get(i);
-                        messageList.add(message.getString("body"));
-                    }
-                    catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                adapter.notifyDataSetChanged();
-
-            }
-        });
     }
 
     // Setup the GoogleAPIClient
@@ -125,6 +102,36 @@ public class MainActivity extends AppCompatActivity
         Log.d("Layer6debug", "Map finished loading.");
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
+
+        LatLng target = mMap.getCameraPosition().target;
+
+        updateMessages(target);
+    }
+
+    private void updateMessages(LatLng target) {
+        Log.d("Layer6debug", "Looking at " + target.latitude + "/" + target.longitude);
+        ServerRestClient.get("listen/" + target.latitude + "/" + target.longitude + "/1", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                // If the response is JSONObject instead of expected JSONArray
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray responses) {
+                // Pull out the first event on the public timeline
+                for (int i = 0; i < responses.length(); i++) {
+                    try {
+                        JSONObject message = (JSONObject) responses.get(i);
+                        messageList.add(message.getString("body"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+        });
     }
 
     @Override
@@ -137,6 +144,7 @@ public class MainActivity extends AppCompatActivity
             if (mMap != null) {
                 // Move map to user's location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17.0f));
+                updateMessages(mMap.getCameraPosition().target);
             }
         } else {
             Log.d("Layer6debug", "No last location found");
