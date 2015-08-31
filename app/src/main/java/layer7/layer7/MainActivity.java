@@ -97,5 +97,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d("Layer7", "Map finished loading.");
+        googleMap.setMyLocationEnabled(true);
     }
 }
