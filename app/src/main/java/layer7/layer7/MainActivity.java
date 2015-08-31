@@ -103,14 +103,16 @@ public class MainActivity extends AppCompatActivity
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
 
-        LatLng target = mMap.getCameraPosition().target;
 
-        updateMessages(target);
+        updateMessages(mMap);
     }
 
-    private void updateMessages(LatLng target) {
+    private void updateMessages(GoogleMap mMap) {
+        LatLng target = mMap.getCameraPosition().target;
+
+        // TODO: set correct circle radius to meters
         Log.d("Layer6debug", "Looking at " + target.latitude + "/" + target.longitude);
-        ServerRestClient.get("listen/" + target.latitude + "/" + target.longitude + "/1", null, new JsonHttpResponseHandler() {
+        ServerRestClient.get("listen/" + target.latitude + "/" + target.longitude + "/100", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity
             if (mMap != null) {
                 // Move map to user's location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17.0f));
-                updateMessages(mMap.getCameraPosition().target);
+                updateMessages(mMap);
             }
         } else {
             Log.d("Layer6debug", "No last location found");
