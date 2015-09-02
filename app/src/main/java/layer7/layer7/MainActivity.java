@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -102,13 +103,16 @@ public class MainActivity extends AppCompatActivity
         Log.d("Layer6debug", "Map finished loading.");
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-
-
-        updateMessages(mMap);
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                updateMessages(cameraPosition);
+            }
+        });
     }
 
-    private void updateMessages(GoogleMap mMap) {
-        LatLng target = mMap.getCameraPosition().target;
+    private void updateMessages(CameraPosition cameraPosition) {
+        LatLng target = cameraPosition.target;
 
         // TODO: set correct circle radius to meters
         Log.d("Layer6debug", "Looking at " + target.latitude + "/" + target.longitude);
@@ -146,7 +150,6 @@ public class MainActivity extends AppCompatActivity
             if (mMap != null) {
                 // Move map to user's location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17.0f));
-                updateMessages(mMap);
             }
         } else {
             Log.d("Layer6debug", "No last location found");
