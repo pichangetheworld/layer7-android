@@ -84,10 +84,11 @@ public class MainActivity extends AppCompatActivity
                     double lat = mLastLocation.getLatitude(),
                             lng = mLastLocation.getLongitude();
 
+                    long timestamp = System.currentTimeMillis();
                     RequestParams params = new RequestParams();
                     // TODO put the user_id
                     params.put("message", message);
-                    params.put("timestamp", System.currentTimeMillis());
+                    params.put("timestamp", timestamp);
 
                     ServerRestClient.post("shout/" + lat + "/" + lng, params, new JsonHttpResponseHandler() {
                         @Override
