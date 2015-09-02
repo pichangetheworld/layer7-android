@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i < responses.length(); i++) {
                     try {
                         JSONObject message = (JSONObject) responses.get(i);
+
+                        // TODO Only add this message if it hasn't already been added
                         messageList.add(message.getString("body"));
                     } catch (JSONException e) {
                         e.printStackTrace();
