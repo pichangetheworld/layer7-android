@@ -81,8 +81,9 @@ public class MainActivity extends AppCompatActivity
                     // TODO post to the /post endpoint
                     Log.d("PostMessage", "Posting message " + message);
 
-                    double lat = mLastLocation.getLatitude(),
-                            lng = mLastLocation.getLongitude();
+                    LatLng loc = mMap.getCameraPosition().target;
+                    double lat = loc.latitude,
+                            lng = loc.longitude;
 
                     long timestamp = System.currentTimeMillis();
                     RequestParams params = new RequestParams();
