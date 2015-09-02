@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -20,6 +23,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -41,6 +45,9 @@ public class MainActivity extends AppCompatActivity
     // ListView and Adapter for messages
     List<String> messageList = Lists.newArrayList();
     ArrayAdapter<String> adapter;
+
+    // EditText for posting new messages
+    EditText newMessageInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,37 @@ public class MainActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.message_list);
         listView.setAdapter(adapter);
 
+        newMessageInput = (EditText) findViewById(R.id.new_message_input);
+        Button newMessageSend = (Button) findViewById(R.id.new_message_send);
+        newMessageSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String message = newMessageInput.getText().toString();
+                if (!message.isEmpty()) {
+                    // TODO post to the /post endpoint
+                    Log.d("PostMessage", "Posting message " + message);
+
+                    double lat = mLastLocation.getLatitude(),
+                            lng = mLastLocation.getLongitude();
+
+                    RequestParams params = new RequestParams();
+                    // TODO put the user_id
+                    params.put("message", message);
+                    params.put("timestamp", System.currentTimeMillis());
+
+                    ServerRestClient.post("shout/" + lat + "/" + lng, params, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            // response was successful!!
+                            Log.d("PostMessage", "Response was successful! " + response.toString());
+                            updateMessages(mMap.getCameraPosition());
+                        }
+                    });
+
+                    newMessageInput.setText("");
+                }
+            }
+        });
     }
 
     // Setup the GoogleAPIClient
