@@ -164,12 +164,13 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray responses) {
+                messageList.clear();
+                
                 // Pull out the first event on the public timeline
                 for (int i = 0; i < responses.length(); i++) {
                     try {
                         JSONObject message = (JSONObject) responses.get(i);
 
-                        // TODO Only add this message if it hasn't already been added
                         messageList.add(message.getString("body"));
                     } catch (JSONException e) {
                         e.printStackTrace();
