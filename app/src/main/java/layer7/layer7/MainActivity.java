@@ -185,7 +185,10 @@ public class MainActivity extends AppCompatActivity
 
                         Layer7Message m = new Layer7Message();
                         m.id = message.getInt("id");
-//                        m.author = message.getString("user_id");  // TODO
+
+                        JSONObject userObj = message.getJSONObject("user");
+                        m.author = userObj.getString("first_name") + " " + userObj.getString("last_name");
+
                         m.message = message.getString("body");
                         String created_at = message.getString("created_at");
                         DateTime dateTime = new DateTime(created_at);
