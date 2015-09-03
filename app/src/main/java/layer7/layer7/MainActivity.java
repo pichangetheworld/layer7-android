@@ -2,12 +2,12 @@ package layer7.layer7;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -45,10 +45,12 @@ public class MainActivity extends AppCompatActivity
 
     // ListView and Adapter for messages
     List<Layer7Message> messageList = Lists.newArrayList();
-    MessageListAdapter adapter;
+    MessageListAdapter mAdapter;
 
     // EditText for posting new messages
     EditText newMessageInput;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +67,22 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
 
         // Set up the posts list
-        adapter = new MessageListAdapter(this, R.layout.list_message, messageList);
+        mAdapter = new MessageListAdapter(this, R.layout.list_message, messageList);
 
-        ListView listView = (ListView) findViewById(R.id.message_list);
-        listView.setAdapter(adapter);
+        mListView = (ListView) findViewById(R.id.message_list);
+        mListView.setAdapter(mAdapter);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.message_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateMessages(mMap.getCameraPosition());
+            }
+        });
 
         newMessageInput = (EditText) findViewById(R.id.new_message_input);
         Button newMessageSend = (Button) findViewById(R.id.new_message_send);
+
         newMessageSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +157,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 updateMessages(cameraPosition);
+                mSwipeRefreshLayout.setRefreshing(true);
             }
         });
     }
@@ -165,7 +177,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray responses) {
                 messageList.clear();
-                
+
                 // Pull out the first event on the public timeline
                 for (int i = 0; i < responses.length(); i++) {
                     try {
@@ -184,7 +196,8 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
 
             }
         });
