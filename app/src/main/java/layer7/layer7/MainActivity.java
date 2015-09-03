@@ -26,6 +26,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap mMap;
 
     // ListView and Adapter for messages
-    List<String> messageList = Lists.newArrayList();
-    ArrayAdapter<String> adapter;
+    List<Layer7Message> messageList = Lists.newArrayList();
+    MessageListAdapter adapter;
 
     // EditText for posting new messages
     EditText newMessageInput;
@@ -64,9 +65,7 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
 
         // Set up the posts list
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                messageList);
+        adapter = new MessageListAdapter(this, R.layout.list_message, messageList);
 
         ListView listView = (ListView) findViewById(R.id.message_list);
         listView.setAdapter(adapter);
@@ -172,7 +171,15 @@ public class MainActivity extends AppCompatActivity
                     try {
                         JSONObject message = (JSONObject) responses.get(i);
 
-                        messageList.add(message.getString("body"));
+                        Layer7Message m = new Layer7Message();
+                        m.id = message.getInt("id");
+//                        m.author = message.getString("user_id");  // TODO
+                        m.message = message.getString("body");
+                        String created_at = message.getString("created_at");
+                        DateTime dateTime = new DateTime(created_at);
+                        m.timePosted = dateTime.getMillis();
+
+                        messageList.add(m);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
