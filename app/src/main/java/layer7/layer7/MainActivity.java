@@ -156,8 +156,8 @@ public class MainActivity extends AppCompatActivity
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                updateMessages(cameraPosition);
                 mSwipeRefreshLayout.setRefreshing(true);
+                updateMessages(cameraPosition);
             }
         });
     }

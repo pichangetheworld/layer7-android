@@ -38,7 +38,7 @@ public class MessageListAdapter extends ArrayAdapter<Layer7Message> {
             TextView messageView = (TextView) v.findViewById(R.id.message);
             TextView timePostedView = (TextView) v.findViewById(R.id.time_posted);
 
-//            authorView.setText(p.author); // TODO
+            authorView.setText(p.author);
             messageView.setText(p.message);
             timePostedView.setText(DateUtils.getRelativeTimeSpanString(p.timePosted));
         }

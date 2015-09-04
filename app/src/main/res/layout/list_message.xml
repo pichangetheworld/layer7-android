@@ -32,6 +32,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:padding="4dp"
-        android:text="By Barack Obama"/>
+        android:text="By Pope Francis"/>
 
 </RelativeLayout>
