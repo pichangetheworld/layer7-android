@@ -1,7 +1,9 @@
 package layer7.layer7;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -47,8 +49,7 @@ public class MainActivity extends AppCompatActivity
     List<Layer7Message> messageList = Lists.newArrayList();
     MessageListAdapter mAdapter;
 
-    // EditText for posting new messages
-    EditText newMessageInput;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
 
@@ -80,40 +81,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        newMessageInput = (EditText) findViewById(R.id.new_message_input);
-        Button newMessageSend = (Button) findViewById(R.id.new_message_send);
-
-        newMessageSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String message = newMessageInput.getText().toString();
-                if (!message.isEmpty()) {
-                    // TODO post to the /post endpoint
-                    Log.d("PostMessage", "Posting message " + message);
-
-                    LatLng loc = mMap.getCameraPosition().target;
-                    double lat = loc.latitude,
-                            lng = loc.longitude;
-
-                    long timestamp = System.currentTimeMillis();
-                    RequestParams params = new RequestParams();
-                    // TODO put the user_id
-                    params.put("message", message);
-                    params.put("timestamp", timestamp);
-
-                    ServerRestClient.post("shout/" + lat + "/" + lng, params, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            // response was successful!!
-                            Log.d("PostMessage", "Response was successful! " + response.toString());
-                            updateMessages(mMap.getCameraPosition());
-                        }
-                    });
-
-                    newMessageInput.setText("");
-                }
+        FloatingActionButton myFab = (FloatingActionButton)  findViewById(R.id.fab_button);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent mSendMsgIntent = new Intent(MainActivity.this, SendLocationActivity.class);
+                LatLng latLng = mMap.getCameraPosition().target;
+                mSendMsgIntent.putExtra(SendLocationActivityFragment.LOCATION, latLng);
+                startActivity(mSendMsgIntent);
             }
         });
+/*
+
+        */
     }
 
     // Setup the GoogleAPIClient
@@ -221,6 +200,14 @@ public class MainActivity extends AppCompatActivity
             Log.d("Layer6debug", "No last location found");
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMap != null) {
+            updateMessages(mMap.getCameraPosition());
+        }
     }
 
     @Override
