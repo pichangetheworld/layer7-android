@@ -54,6 +54,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="layer7.layer7.MainActivity" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="36cc22f3138c5bdbd3d46f8a68317865cf707cea" />
     </application>
 
 </manifest>
