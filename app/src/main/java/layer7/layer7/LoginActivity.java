@@ -39,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(Result<TwitterSession> result) {
                 // Do something with result, which provides a TwitterSession for making API calls
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                finish();
+                startActivity(i);
             }
 
             @Override
