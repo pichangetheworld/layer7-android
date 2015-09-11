@@ -1,7 +1,6 @@
 package layer7.layer7;
 
 import android.app.Activity;
-import android.preference.PreferenceActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -22,12 +22,11 @@ import org.json.JSONObject;
  * A placeholder fragment containing a simple view.
  */
 public class SendLocationActivityFragment extends Fragment {
-    public final static String LOCATION = "layer7.layer7.location";
 
     // EditText for posting new messages
     EditText newMessageInput;
     SendLocationActivity sendLocationActivity;
-    private LatLng location;
+    private CameraPosition cameraPosition;
 
     public SendLocationActivityFragment() {
 
@@ -38,6 +37,7 @@ public class SendLocationActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View myViewFrag = inflater.inflate(R.layout.fragment_send_location, container, false);
         newMessageInput = (EditText) myViewFrag.findViewById(R.id.new_message_input);
+        newMessageInput.requestFocus();
         Button newMessageSend = (Button) myViewFrag.findViewById(R.id.new_message_send);
 
         newMessageSend.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +48,7 @@ public class SendLocationActivityFragment extends Fragment {
                     // TODO post to the /post endpoint
                     Log.d("PostMessage", "Posting message " + message);
 
-                    LatLng loc = location;
+                    LatLng loc = cameraPosition.target;
                     double lat = loc.latitude,
                             lng = loc.longitude;
 
@@ -63,7 +63,7 @@ public class SendLocationActivityFragment extends Fragment {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             // response was successful!!
                             Log.d("PostMessage", "Response was successful! " + response.toString());
-                            sendLocationActivity.finish();
+                            sendLocationActivity.supportFinishAfterTransition();
                         }
                     });
 
@@ -83,6 +83,6 @@ public class SendLocationActivityFragment extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString());
         }
-        location = sendLocationActivity.getIntent().getParcelableExtra(LOCATION);
+        cameraPosition = sendLocationActivity.getIntent().getParcelableExtra(getString(R.string.intent_parceble_camera_position));
     }
 }

@@ -1,6 +1,8 @@
 package layer7.layer7;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapFragment.getMap().setPadding(0, getToolbarAndStatusBarPxHeight(), 0, 0);
+
 
         // Set up the GoogleAPIClient
         buildGoogleApiClient();
@@ -89,11 +94,10 @@ public class MainActivity extends AppCompatActivity
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent mSendMsgIntent = new Intent(MainActivity.this, SendLocationActivity.class);
-                LatLng latLng = mMap.getCameraPosition().target;
-                mSendMsgIntent.putExtra(SendLocationActivityFragment.LOCATION, latLng);
+                mSendMsgIntent.putExtra(getString(R.string.intent_parceble_camera_position), mMap.getCameraPosition());
                 // TODO(mchinavan) make this work
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        MainActivity.this, myFab, SendLocationActivity.VIEW_ID);
+                        MainActivity.this, findViewById(R.id.map_wrapper), getString(R.string.transition_map));
                 ActivityCompat.startActivity(MainActivity.this, mSendMsgIntent, options.toBundle());
             }
         });
@@ -136,6 +140,8 @@ public class MainActivity extends AppCompatActivity
         Log.d("Layer6debug", "Map finished loading.");
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
+        UiSettings uiSettings = mMap.getUiSettings();
+        uiSettings.setTiltGesturesEnabled(false);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
@@ -143,7 +149,6 @@ public class MainActivity extends AppCompatActivity
                 updateMessages(cameraPosition);
             }
         });
-        mMap.setPadding(0, getToolbarAndStatusBarPxHeight(), 0, 0);
     }
 
 
@@ -244,4 +249,5 @@ public class MainActivity extends AppCompatActivity
         }
         return result;
     }
+
 }

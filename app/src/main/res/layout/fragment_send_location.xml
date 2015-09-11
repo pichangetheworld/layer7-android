@@ -7,15 +7,16 @@
     tools:context="layer7.layer7.SendLocationActivityFragment">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/new_message_input"
             android:layout_width="fill_parent"
-            android:layout_height="300dp"
-            android:hint="Post a new message..."/>
+            android:layout_height="150dp"
+            android:hint="Post a new message..."
+            android:gravity="top"/>
 
         <LinearLayout
             android:layout_width="match_parent"

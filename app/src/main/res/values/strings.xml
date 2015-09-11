@@ -4,4 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_send_location">SendLocationActivity</string>
+
+    <string name="transition_map">transition_map</string>
+    <string name="intent_parceble_camera_position">layer7.layer7.camera_position</string>
+
 </resources>
