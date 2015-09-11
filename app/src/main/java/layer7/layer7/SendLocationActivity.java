@@ -7,6 +7,8 @@ import android.view.MenuItem;
 
 public class SendLocationActivity extends AppCompatActivity {
 
+    public static final String VIEW_ID = "SendLocationActivity:fragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

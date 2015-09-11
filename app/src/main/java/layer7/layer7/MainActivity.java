@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,7 +26,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.joda.time.DateTime;
@@ -52,12 +52,16 @@ public class MainActivity extends AppCompatActivity
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
         // Set up the map
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -81,18 +85,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        FloatingActionButton myFab = (FloatingActionButton)  findViewById(R.id.fab_button);
+        final FloatingActionButton myFab = (FloatingActionButton)  findViewById(R.id.fab_button);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent mSendMsgIntent = new Intent(MainActivity.this, SendLocationActivity.class);
                 LatLng latLng = mMap.getCameraPosition().target;
                 mSendMsgIntent.putExtra(SendLocationActivityFragment.LOCATION, latLng);
-                startActivity(mSendMsgIntent);
+                // TODO(mchinavan) make this work
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        MainActivity.this, myFab, SendLocationActivity.VIEW_ID);
+                ActivityCompat.startActivity(MainActivity.this, mSendMsgIntent, options.toBundle());
             }
         });
-/*
-
-        */
     }
 
     // Setup the GoogleAPIClient
@@ -139,7 +143,9 @@ public class MainActivity extends AppCompatActivity
                 updateMessages(cameraPosition);
             }
         });
+        mMap.setPadding(0, getToolbarAndStatusBarPxHeight(), 0, 0);
     }
+
 
     private void updateMessages(CameraPosition cameraPosition) {
         LatLng target = cameraPosition.target;
@@ -218,5 +224,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Layer6debug", "CONNECTION FAILED");
+    }
+
+
+    /* ================================== *
+     * Helpers                            *
+     * ================================== */
+
+
+    private int getToolbarAndStatusBarPxHeight() {
+        return (int) ((mToolbar.getHeight() + getStatusBarHeight()) * getResources().getDisplayMetrics().density);
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }
