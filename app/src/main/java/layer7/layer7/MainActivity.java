@@ -96,9 +96,10 @@ public class MainActivity extends AppCompatActivity
                 Intent mSendMsgIntent = new Intent(MainActivity.this, SendLocationActivity.class);
                 mSendMsgIntent.putExtra(getString(R.string.intent_parceble_camera_position), mMap.getCameraPosition());
                 // TODO(mchinavan) make this work
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        MainActivity.this, findViewById(R.id.map_wrapper), getString(R.string.transition_map));
-                ActivityCompat.startActivity(MainActivity.this, mSendMsgIntent, options.toBundle());
+              //  ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+              //          MainActivity.this, findViewById(R.id.map_wrapper), getString(R.string.transition_map));
+               // ActivityCompat.startActivity(MainActivity.this, mSendMsgIntent, options.toBundle());
+                ActivityCompat.startActivity(MainActivity.this, mSendMsgIntent, null);
             }
         });
     }

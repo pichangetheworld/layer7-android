@@ -72,6 +72,8 @@ public class SendLocationActivity extends AppCompatActivity
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition((CameraPosition) getIntent().getParcelableExtra(getString(R.string.intent_parceble_camera_position))));
     }
 }
